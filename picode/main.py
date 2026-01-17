@@ -96,7 +96,7 @@ def loop():
             LED.toggle()
         else:
             print("It is peaceful and quiet.")
-            LED.value(0)
+            LED.value(1)
         post_reading(level_pct, too_loud)
         time.sleep_ms(50)
 
