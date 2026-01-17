@@ -1,5 +1,6 @@
 from machine import ADC, Pin
 import time
+import config
 
 MIC_ADC = ADC(Pin(26))
 LED = machine.Pin(22, machine.Pin.OUT)
@@ -16,6 +17,34 @@ smoothed_level = 0.0
 def clamp(x, lo, hi):
     return lo if x < lo else hi if x > hi else x    
 
+def connect_wifi():
+	import network
+	import time
+
+	wlan = network.WLAN(network.STA_IF) # Station interface
+	wlan.active(True) # Activate the interface
+
+	ssid = config.ssid # Your Wi-Fi network name (SSID)
+	password = config.password # Your Wi-Fi password
+
+	wlan.connect(ssid, password)
+
+	# Wait for connection
+	max_wait = 10
+	while max_wait > 0:
+			if wlan.status() < 0 or wlan.status() >= 3:
+				break
+			max_wait -= 1
+			print('waiting for connection...')
+			time.sleep(1)
+
+		# Print connection status and IP address
+		if wlan.status() != 3:
+			raise RuntimeError('network connection failed')
+		else:
+			print('Connected to', ssid)
+			print('IP Address:', wlan.ifconfig()[0])
+			
 while True:
     start = time.ticks_ms()
     min_val = 65535
