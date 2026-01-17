@@ -1,10 +1,11 @@
 import Lamp from "./Lamp";
 
 function Floorplan(props: any) {
-  const handleMove = (uuid: string, x: string, y: string) => {
-    props.setLamps((prev: any[]) =>
-      prev.map((l: any) => (l.uuid === uuid ? { ...l, x, y } : l)),
-    );
+  const handleMove = (label: string, x: string, y: string) => {
+    props.setLamps((prev: any) => ({
+      ...prev,
+      [label]: { ...prev[label], x, y },
+    }));
   };
 
   return (
