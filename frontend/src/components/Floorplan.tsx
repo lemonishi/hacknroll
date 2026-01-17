@@ -1,15 +1,49 @@
 import Lamp from "./Lamp";
+import positions from "../data/position.json";
+import { useMemo } from "react";
+
+type Position = {
+  id: string;
+  x: string;
+  y: string;
+  level: 1 | 2;
+};
 
 function Floorplan(props: any) {
+  /**
+   * Build lookup:
+   * {
+   *   A1: { x, y, level },
+   *   A2: { x, y, level },
+   *   ...
+   * }
+   */
+  const positionMap = useMemo(() => {
+    const map: Record<string, Position> = {};
+    (positions as Position[]).forEach((p) => {
+      map[p.id] = p;
+    });
+    return map;
+  }, []);
+
+  /**
+   * Drag handler
+   * (updates App state only; does NOT touch position.json)
+   */
   const handleMove = (label: string, x: string, y: string) => {
     props.setLamps((prev: any) => ({
       ...prev,
-      [label]: { ...(prev?.[label] ?? { label }), x, y },
+      [label]: {
+        ...(prev?.[label] ?? { label }),
+        x,
+        y,
+      },
     }));
   };
 
   return (
     <div className="col-span-12 lg:col-span-8 lg:row-span-2 w-full bg-[#2b2b2b] rounded-xl border border-white/5 p-5">
+      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
           <div className="text-white text-lg font-semibold">Floorplan</div>
@@ -17,24 +51,11 @@ function Floorplan(props: any) {
             Drag pins to set lamp positions • Level {props.level}
           </div>
         </div>
-
-        <div className="flex items-center gap-2 text-xs">
-          <span className="px-2 py-1 rounded-full border border-white/10 text-white/70">
-            Legend
-          </span>
-          <span className="px-2 py-1 rounded-full bg-green-500/15 text-green-200 border border-green-500/30">
-            Quiet
-          </span>
-          <span className="px-2 py-1 rounded-full bg-yellow-500/15 text-yellow-200 border border-yellow-500/30">
-            Warn
-          </span>
-          <span className="px-2 py-1 rounded-full bg-red-500/15 text-red-200 border border-red-500/30">
-            Loud
-          </span>
-        </div>
       </div>
 
+      {/* Canvas */}
       <div className="relative w-full h-[55vh] rounded-xl overflow-hidden bg-[#1f1f1f] border border-white/10">
+        {/* SINGLE shared floorplan image */}
         <img
           src={`/floorplan-${props.level}.png`}
           alt="Library Floorplan"
@@ -42,16 +63,25 @@ function Floorplan(props: any) {
           draggable={false}
         />
 
-        {(props.lamps || []).map((l: any) => (
-          <Lamp
-            key={l.label}
-            label={l.label}
-            x={l.x || "50%"}
-            y={l.y || "50%"}
-            value={typeof l.value === "number" ? l.value : 0}
-            onMove={handleMove}
-          />
-        ))}
+
+        {/* Lamps */}
+        {(props.lamps || []).map((lamp: any) => {
+          const pos = positionMap[lamp.label];
+
+          // If no position entry or wrong level → don't render
+          if (!pos || pos.level !== props.level) return null;
+
+          return (
+            <Lamp
+              key={lamp.label}
+              label={lamp.label}
+              value={typeof lamp.value === "number" ? lamp.value : 0}
+              x={lamp.x ?? pos.x}
+              y={lamp.y ?? pos.y}
+              onMove={handleMove}
+            />
+          );
+        })}
       </div>
     </div>
   );

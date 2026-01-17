@@ -15,7 +15,7 @@ function Sidebar(props: any) {
             <div className="flex justify-between">
               <span className="text-sm text-white/70">Noise</span>
               <span className="text-sm text-white font-medium">
-                {typeof lamp.value === "number" ? `${lamp.value} dB` : "—"}
+                {typeof lamp.value === "number" ? `${lamp.value} %` : "—"}
               </span>
             </div>
 

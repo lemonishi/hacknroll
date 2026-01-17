@@ -59,7 +59,7 @@ function Lamp({ label, x, y, value, onMove }: LampProps) {
       className="absolute -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing select-none"
       style={{ left: x, top: y, touchAction: "none" }}
       onPointerDown={handlePointerDown}
-      title={`${label} • Noise ${value}`}
+      title={`${label} • Noise ${value}%`}
     >
       <div className="relative w-12 h-12">
         {/* glow */}
