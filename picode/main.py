@@ -1,6 +1,7 @@
 from machine import ADC, Pin
 import time
-
+from machine import RTC
+import utime
 import network
 import socket
 from time import sleep
@@ -21,6 +22,8 @@ SCALE = 0.008
 LOUDNESS_THRESHOLD = 45.0
 
 smoothed_level = 0.0
+
+rtc = RTC()
 
 def clamp(x, lo, hi):
     return lo if x < lo else hi if x > hi else x
@@ -45,11 +48,12 @@ def connect():
     return ip
 
 def post_reading(level, is_loud):
-    url = config.server_ip + "/api/reading"
+    url = config.server_ip + "/devices/update"
     payload = {
         "lamp_id": config.uuid,
         "level": level,
-        "is_loud": is_loud
+        "active": True,
+        "last_update": rtc.datetime()
     }
 
     try:
