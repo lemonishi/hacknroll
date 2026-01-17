@@ -2,6 +2,7 @@ from machine import ADC, Pin
 import time
 
 MIC_ADC = ADC(Pin(26))
+LED = machine.Pin(22, machine.Pin.OUT)
 
 WINDOW_MS = 50
 SMOOTH_ALPHA = 0.90
@@ -13,7 +14,7 @@ LOUDNESS_THRESHOLD = 45.0
 smoothed_level = 0.0
 
 def clamp(x, lo, hi):
-    return lo if x < lo else hi if x > hi else x
+    return lo if x < lo else hi if x > hi else x    
 
 while True:
     start = time.ticks_ms()
@@ -40,8 +41,10 @@ while True:
 
     if level_pct > LOUDNESS_THRESHOLD:
         print("Too loud!")
+        LED.toggle()
     else:
         print("It is peaceful and quiet.")
+        LED.value(0)
 
     time.sleep_ms(50)
 
