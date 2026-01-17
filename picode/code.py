@@ -18,8 +18,6 @@ SCALE = 0.008
 
 LOUDNESS_THRESHOLD = 45.0
 
-smoothed_level = 0.0
-
 ssid = 'OPPO'
 password = '12340000'
 
@@ -45,8 +43,9 @@ def connect():
     return ip
 
 def loop():
+    smoothed_level = 0.0
+    
     while True:
-        
         start = time.ticks_ms()
         min_val = 65535
         max_val = 0
