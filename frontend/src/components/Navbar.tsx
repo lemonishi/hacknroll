@@ -1,30 +1,37 @@
-import { useState } from "react";
+type Props = {
+  level: 1 | 2;
+  setLevel: (lvl: 1 | 2) => void;
+};
 
-function Navbar() {
-  const [activeTab, setActiveTab] = useState("Level 1");
-  const tabs = ["Level 1", "Level 2"];
-
+function Navbar({ level, setLevel }: Props) {
   return (
-    <nav className="flex justify-center rounded-lg bg-[#2f2f2f] p-4 w-full">
-      {/* <div className="flex items-center">Logo</div> */}
-      <div className="flex bg-[#3a3a3a] rounded-full p-1 gap-1">
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-full transition
-              ${
-                activeTab === tab
-                  ? "bg-[#2b2b2b] text-yellow-400"
-                  : "text-white hover:text-white"
-              }`}
-          >
-            {tab}
-          </button>
-        ))}
+    <div className="w-full bg-[#2b2b2b] rounded-xl border border-white/5 px-6 py-4 flex items-center justify-center">
+      <div className="bg-[#1f1f1f] border border-white/10 rounded-full p-1 flex gap-1">
+        <button
+          type="button"
+          onClick={() => setLevel(1)}
+          className={
+            level === 1
+              ? "px-4 py-2 rounded-full text-sm font-semibold bg-[#2d2d2d] text-yellow-300 shadow"
+              : "px-4 py-2 rounded-full text-sm font-semibold text-white/70 hover:text-white hover:bg-white/5 transition"
+          }
+        >
+          Level 1
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setLevel(2)}
+          className={
+            level === 2
+              ? "px-4 py-2 rounded-full text-sm font-semibold bg-[#2d2d2d] text-yellow-300 shadow"
+              : "px-4 py-2 rounded-full text-sm font-semibold text-white/70 hover:text-white hover:bg-white/5 transition"
+          }
+        >
+          Level 2
+        </button>
       </div>
-      {/* <div></div> */}
-    </nav>
+    </div>
   );
 }
 

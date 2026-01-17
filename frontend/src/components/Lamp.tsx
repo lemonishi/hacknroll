@@ -1,7 +1,8 @@
 type LampProps = {
-  label: string; // e.g. "Lamp 1" or "L1"
+  label: string; // "Lamp 1"
   x: string;
   y: string;
+  value: number; // 0-100
   onMove: (id: string, x: string, y: string) => void;
 };
 
@@ -9,13 +10,18 @@ function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
 
-// Extract digits from label (Lamp 12 -> 12). Fallback to label.
 function getNumber(label: string) {
   const m = label.match(/\d+/);
   return m ? m[0] : label.replace(/^L/i, "");
 }
 
-function Lamp({ label, x, y, onMove }: LampProps) {
+function glowClass(value: number) {
+  if (value >= 70) return "bg-red-400/25";
+  if (value >= 40) return "bg-yellow-300/25";
+  return "bg-green-400/25";
+}
+
+function Lamp({ label, x, y, value, onMove }: LampProps) {
   const num = getNumber(label);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -53,21 +59,20 @@ function Lamp({ label, x, y, onMove }: LampProps) {
       className="absolute -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing select-none"
       style={{ left: x, top: y, touchAction: "none" }}
       onPointerDown={handlePointerDown}
-      title={label}
+      title={`${label} • Noise ${value}`}
     >
-      {/* Pin body */}
       <div className="relative w-12 h-12">
-        {/* Glow */}
-        <div className="absolute inset-0 rounded-full bg-yellow-200/30 blur-md" />
+        {/* glow */}
+        <div className={`absolute inset-0 rounded-full blur-md ${glowClass(value)}`} />
 
-        {/* Lamp head (bulb) */}
-        <div className="absolute left-1/2 top-[6px] -translate-x-1/2 w-8 h-8 rounded-full bg-yellow-100 border border-yellow-300 shadow" />
+        {/* bulb */}
+        <div className="absolute left-1/2 top-[6px] -translate-x-1/2 w-8 h-8 rounded-full bg-white/90 border border-white/40 shadow" />
 
-        {/* Lamp base */}
-        <div className="absolute left-1/2 top-[34px] -translate-x-1/2 w-7 h-4 rounded-b-xl bg-gray-200 border border-gray-300 shadow-sm" />
+        {/* base */}
+        <div className="absolute left-1/2 top-[34px] -translate-x-1/2 w-7 h-4 rounded-b-xl bg-[#d7d7d7] border border-black/10 shadow-sm" />
 
-        {/* Number badge */}
-        <div className="absolute -right-1 -top-1 w-6 h-6 rounded-full bg-black text-white text-xs font-bold flex items-center justify-center border border-white shadow">
+        {/* number */}
+        <div className="absolute -right-1 -top-1 w-6 h-6 rounded-full bg-black/80 text-white text-xs font-bold flex items-center justify-center border border-white/40 shadow">
           {num}
         </div>
       </div>
