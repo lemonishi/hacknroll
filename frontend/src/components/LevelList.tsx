@@ -1,1 +1,1 @@
-export default [1,2,3] as const;
+export default [1,2] as const;
