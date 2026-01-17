@@ -14,6 +14,7 @@ method:GET
 
 #/devices/update
 method:PUT
+query params: uuid (string), value (int)
 {
   "value":-1,
   "active":True,
