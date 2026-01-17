@@ -1,4 +1,4 @@
-import allLevels from "./LevelList"
+import allLevels from "../data/LevelList"
 
 type Props = {
   level: typeof allLevels[number];

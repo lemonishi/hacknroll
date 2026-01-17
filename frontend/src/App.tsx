@@ -6,7 +6,7 @@ import Navbar from "./components/Navbar";
 import GridLayout from "./layouts/GridLayout";
 import Log from "./components/Log";
 import initialLampsRaw from "./data/test.json";
-import allLevels from "./components/LevelList";
+import allLevels from "./data/LevelList";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type Lamp = {
