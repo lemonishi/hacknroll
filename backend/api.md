@@ -12,16 +12,8 @@ method:GET
   }
 }
 
-#/devices/subscribe
-method:POST
-{
-  "value":-1,
-  "active":True,
-  "last_update":-1
-}
-
 #/devices/update
-method:PATCH
+method:PUT
 {
   "value":-1,
   "active":True,
