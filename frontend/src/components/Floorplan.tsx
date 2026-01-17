@@ -8,16 +8,10 @@ function Floorplan(props: any) {
   };
 
   return (
-    <div className="w-2/3 bg-gray-500">
-      <div className="relative w-full h-[90vh] overflow-hidden">
-        <img
-  src="/floorplan.png"
-  alt="Library Floorplan"
-  className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-  draggable={false}
-/>
-
-
+    
+    <div className="flex justify-center items-center row-span-2 col-span-5 bg-[#2d2d2d]">
+      <div className="relative w-full h-full">
+        <div className="absolute inset-0 bg-[url('/floorplan.png')] bg-contain bg-no-repeat bg-center" />
         {props.lamps.map((l: any) => (
           <Lamp
             key={l.uuid}
