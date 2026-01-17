@@ -4,7 +4,7 @@ function Sidebar(props: any) {
       <div className="flex flex-col gap-4">
         {props.lamps.map((lamp: any) => (
           <div className="flex flex-col gap-4 bg-gray-300 rounded-lg p-2">
-            <p className="text-lg">{lamp}</p>
+            <p className="text-lg">{lamp.uuid}</p>
             <p className="text-sm">Noise Level</p>
           </div>
         ))}
