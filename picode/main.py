@@ -8,6 +8,7 @@ import machine
 import rp2
 import sys
 import config
+import urequests as requests
 
 MIC_ADC = ADC(Pin(26))
 LED = machine.Pin(22, machine.Pin.OUT)
@@ -25,7 +26,7 @@ def clamp(x, lo, hi):
     return lo if x < lo else hi if x > hi else x
 
 def connect():
-    network.WLAN.config(config.uuid)
+    network.hostname(config.uuid)
     #Connect to WLAN
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
@@ -69,6 +70,13 @@ def loop():
 
         print("{:.1f}%".format(level_pct))
 
+        while True:
+            try:
+                requests.put(f"http://{config.server_ip}:5000/devices/update?uuid={config.uuid}&value={level_pct}")
+                break
+            except OSError:
+                pass # try again
+            time.sleep(0.5)
         if level_pct > LOUDNESS_THRESHOLD:
             print("Too loud!")
             LED.toggle()
@@ -80,5 +88,6 @@ def loop():
 
 def main():
     connect()
+    loop()
     
 main()

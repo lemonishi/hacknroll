@@ -3,3 +3,4 @@
 ssid="YOUR_WIFI_SSID"
 password="YOUR_WIFI_PASSWORD"
 uuid="device name"
+server_ip="10.42.0.1"
