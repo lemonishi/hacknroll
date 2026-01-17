@@ -1,0 +1,5 @@
+.dockerignore
+.gitignore
+backend-venv/
+api.md
+__pycache__/
