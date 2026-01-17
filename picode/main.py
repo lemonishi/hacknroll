@@ -44,6 +44,22 @@ def connect():
     #pico_led.on()
     return ip
 
+def post_reading(level, is_loud):
+    url = config.server_ip + "/api/reading"
+    payload = {
+        "lamp_id": config.uuid,
+        "level": level,
+        "is_loud": is_loud
+    }
+
+    try:
+        requests.post(url, json=payload, timeout=0.1) # Short timeout
+        print("Data sent")
+    except OSError as e:
+        print(f"Network error: {e}")
+    except Exception as e:
+        print(f"Other error: {e}")
+
 def loop():
     smoothed_level = 0.0
     
@@ -69,22 +85,15 @@ def loop():
         level_pct = clamp(smoothed_level * SCALE, 0.0, 100.0)
 
         print("{:.1f}%".format(level_pct))
-
-        for _ in range(10):
-            try:
-                requests.put(f"http://{config.server_ip}:5000/devices/update?uuid={config.uuid}&value={level_pct}")
-                break
-            except OSError:
-                pass # try again
-            print("failed to send")
-            time.sleep(0.5)
-        if level_pct > LOUDNESS_THRESHOLD:
+        too_loud = level_pct > LOUDNESS_THRESHOLD
+        
+        if too_loud:
             print("Too loud!")
             LED.toggle()
         else:
             print("It is peaceful and quiet.")
             LED.value(0)
-
+        post_reading("{:.1f}%".format(level_pct), too_loud)
         time.sleep_ms(50)
 
 def main():
