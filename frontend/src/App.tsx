@@ -7,6 +7,7 @@ import GridLayout from "./layouts/GridLayout";
 import Log from "./components/Log";
 import initialLampsRaw from "./data/test.json";
 import { useMemo, useState } from "react";
+import allLevels from "./components/LevelList"
 
 type Lamp = {
   uuid: string;     // we normalize keys (A1, A2...) into uuid
@@ -49,7 +50,7 @@ function normalizeToDict(data: any): LampsDict {
 
 function App() {
   const [lamps, setLamps] = useState<LampsDict>(() => normalizeToDict(initialLampsRaw));
-  const [level, setLevel] = useState<1 | 2>(1);
+  const [level, setLevel] = useState<typeof allLevels[number]>(1);
 
   const lampsArray = useMemo(() => Object.values(lamps), [lamps]);
 
