@@ -36,7 +36,7 @@ function Floorplan(props: any) {
 
       <div className="relative w-full h-[55vh] rounded-xl overflow-hidden bg-[#1f1f1f] border border-white/10">
         <img
-          src="/floorplan.png"
+          src={`/floorplan-${props.level}.png`}
           alt="Library Floorplan"
           className="absolute inset-0 w-full h-full object-contain pointer-events-none"
           draggable={false}
