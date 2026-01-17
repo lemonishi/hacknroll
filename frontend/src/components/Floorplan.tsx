@@ -1,10 +1,11 @@
 import Lamp from "./Lamp";
 
 function Floorplan(props: any) {
-  const handleMove = (uuid: string, x: string, y: string) => {
-    props.setLamps((prev: any[]) =>
-      prev.map((l: any) => (l.uuid === uuid ? { ...l, x, y } : l))
-    );
+  const handleMove = (label: string, x: string, y: string) => {
+    props.setLamps((prev: any) => ({
+      ...prev,
+      [label]: { ...prev[label], x, y },
+    }));
   };
 
   return (
@@ -38,12 +39,11 @@ function Floorplan(props: any) {
           className="absolute inset-0 w-full h-full object-contain pointer-events-none"
           draggable={false}
         />
-
-        {(props.lamps || []).map((l: any) => (
+        {Object.entries(props.lamps).map(([key, l]: [string, any]) => (
           <Lamp
-            key={l.uuid}
-            label={l.uuid}
-            x={l.x || "50%"}
+            key={l.label}
+            label={l.label}
+            x={l.x || "50%"} // fallback so it won't disappear
             y={l.y || "50%"}
             value={typeof l.value === "number" ? l.value : 0}
             onMove={handleMove}

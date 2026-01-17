@@ -2,6 +2,7 @@ import "./App.css";
 import MainLayout from "./layouts/MainLayout";
 import Sidebar from "./components/Sidebar";
 import Floorplan from "./components/Floorplan";
+import { useEffect } from "react";
 import Navbar from "./components/Navbar";
 import GridLayout from "./layouts/GridLayout";
 import Log from "./components/Log";
@@ -9,8 +10,27 @@ import initialLamps from "./data/test.json";
 import { useMemo, useState } from "react";
 
 function App() {
-  // IMPORTANT: JSON import is read-only → must use state for dragging to work
-  const [lamps, setLamps] = useState<any[]>(initialLamps as any[]);
+  const [lamps, setLamps] = useState(initialLamps);
+  const url = "http://10.203.103.170:5001";
+
+  useEffect(() => {
+    const fetchLamps = async () => {
+      try {
+        const res = await fetch(`${url}/devices/list`);
+        if (!res.ok) {
+          throw new Error("Failed to get lamps!");
+        }
+        const data = await res.json();
+        setLamps(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchLamps();
+    const interval = setInterval(fetchLamps, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Level selector state (Navbar buttons will now work)
   const [level, setLevel] = useState<1 | 2>(1);

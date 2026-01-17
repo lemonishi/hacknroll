@@ -1,18 +1,14 @@
-[
-  {
-    "uuid": "Lamp 1",
-    "value": 20,
+{
+  "A1": {
     "active": true,
-    "last_update": -1,
-    "x": "50%",
-    "y": "50%"
+    "label": "A1",
+    "last_update": 1768660966,
+    "value": 50.161508
   },
-  {
-    "uuid": "Lamp 2",
-    "value": 60,
+  "A2": {
+    "label": "A2",
     "active": true,
-    "last_update": -1,
-    "x": "30%",
-    "y": "40%"
+    "last_update": 1768657973,
+    "value": 58.87792
   }
-]
+}
