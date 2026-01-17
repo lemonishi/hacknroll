@@ -1,12 +1,13 @@
 import Lamp from "./Lamp";
 import positions from "../data/position.json";
 import { useMemo } from "react";
+import allLevels from "../data/LevelList.tsx"
 
 type Position = {
   id: string;
   x: string;
   y: string;
-  level: 1 | 2;
+  level: typeof allLevels[number];
 };
 
 function Floorplan(props: any) {
@@ -57,11 +58,11 @@ function Floorplan(props: any) {
       <div className="relative w-full h-[55vh] rounded-xl overflow-hidden bg-[#1f1f1f] border border-white/10">
         {/* SINGLE shared floorplan image */}
         <img
-  src="/floorplan2.png"
-  alt="Floorplan"
-  className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
-  draggable={false}
-/>
+          src={`/floorplan-${props.level}.png`}
+          alt="Library Floorplan"
+          className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+          draggable={false}
+        />
 
 
         {/* Lamps */}
