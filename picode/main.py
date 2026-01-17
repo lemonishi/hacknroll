@@ -48,7 +48,7 @@ def connect():
     return ip
 
 def post_reading(level, is_loud):
-    url = config.server_ip + "/devices/update"
+    url = f"{config.server_ip}:5000/devices/update"
     payload = {
         "lamp_id": config.uuid,
         "level": level,
@@ -57,7 +57,7 @@ def post_reading(level, is_loud):
     }
 
     try:
-        requests.post(url, json=payload, timeout=0.1) # Short timeout
+        requests.put(url, json=payload, timeout=0.1) # Short timeout
         print("Data sent")
     except OSError as e:
         print(f"Network error: {e}")
