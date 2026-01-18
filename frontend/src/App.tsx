@@ -77,7 +77,9 @@ export default function App() {
   }, [lamps]);
 
   const loudStreakRef = useRef<Record<string, number>>({});
-  const hasLoggedThisEpisodeRef = useRef<Record<string, boolean>>({});
+  const hasLoggedThisNormalEpisodeRef = useRef<Record<string, boolean>>({});
+  const hasLoggedThisStreakEpisodeRef = useRef<Record<string, boolean>>({});
+  const hasLoggedThisChangeEpisodeRef = useRef<Record<string, boolean>>({});
 
   const lampsArray = useMemo(() => Object.values(lamps), [lamps]);
   const visibleLamps = useMemo(() => lampsArray.filter((l) => Number(l.level) === level), [lampsArray, level]);
@@ -92,8 +94,9 @@ export default function App() {
         const prevLamp = prev[id];
         merged[id] = {
           ...incLamp,
-          x: incLamp.x ?? prevLamp?.x,
-          y: incLamp.y ?? prevLamp?.y,
+          level: 1,
+          x: incLamp.x ?? prevLamp?.x ?? "50%",
+          y: incLamp.y ?? prevLamp?.y ?? "50%",
         };
       }
 
@@ -101,6 +104,8 @@ export default function App() {
       for (const [id, prevLamp] of Object.entries(prev)) {
         if (!merged[id]) merged[id] = prevLamp;
       }
+      
+      console.log(merged);
 
       return merged;
     });
@@ -117,13 +122,33 @@ export default function App() {
       loudStreakRef.current[id] = nextStreak;
 
       if (!isLoud) {
-        hasLoggedThisEpisodeRef.current[id] = false;
+        hasLoggedThisStreakEpisodeRef.current[id] = false;
+        hasLoggedThisChangeEpisodeRef.current[id] = false;
+        if(!hasLoggedThisNormalEpisodeRef.current[id]){
+          hasLoggedThisNormalEpisodeRef.current[id] = true;
+          newLogs.push({
+            ts: nowTs(),
+            lamp: name,
+            msg: `Back to normal (${v}%)`,
+            level: "info",
+          });
+        }
         continue;
       }
+      hasLoggedThisNormalEpisodeRef.current[id] = false;
 
-      const alreadyLogged = hasLoggedThisEpisodeRef.current[id] ?? false;
-      if (!alreadyLogged && nextStreak >= LOUD_STREAK_TO_LOG) {
-        hasLoggedThisEpisodeRef.current[id] = true;
+      const alreadyLoggedStreak = hasLoggedThisStreakEpisodeRef.current[id] ?? false;
+      const alreadyLoggedChange = hasLoggedThisChangeEpisodeRef.current[id] ?? false;
+      if(!alreadyLoggedChange){
+		newLogs.push({
+          ts: nowTs(),
+          lamp: name,
+          msg: `Became LOUD (≥ ${LOUD_THRESHOLD}%) Current: ${v}%`,
+          level: "warn",
+        });
+        hasLoggedThisChangeEpisodeRef.current[id] = true;
+      } else if (!alreadyLoggedStreak && nextStreak >= LOUD_STREAK_TO_LOG) {
+        hasLoggedThisStreakEpisodeRef.current[id] = true;
         const name = lamp.label ?? lamp.uuid ?? id;
 
         newLogs.push({
@@ -141,16 +166,17 @@ export default function App() {
   }
 
   useEffect(() => {
+    const apiOrigin=`${location.protocol}//${location.hostname}:5001`;
     async function fetchLamps() {
       // ✅ If backend is not working yet, simulate "fetch" using CURRENT state (not stale)
       // This keeps logs counting and allows drag to persist.
-      const simulatedIncoming = lampsRef.current;
-      applyIncoming(simulatedIncoming);
+      // const simulatedIncoming = lampsRef.current;
+      // applyIncoming(simulatedIncoming);
 
       // Later, replace the above 2 lines with real fetch:
-      // const res = await fetch("http://localhost:XXXX/lamps");
-      // const data = await res.json();
-      // applyIncoming(normalizeToDict(data));
+      const res = await fetch(`${apiOrigin}/devices/list`);
+      const data = await res.json();
+      applyIncoming(normalizeToDict(data));
     }
 
     fetchLamps();
