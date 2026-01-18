@@ -122,6 +122,7 @@ export default function App() {
       const nextStreak = isLoud ? prevStreak + 1 : 0;
       loudStreakRef.current[id] = nextStreak;
 
+      const name = lamp.label ?? lamp.uuid ?? id;
       if (!isLoud) {
         hasLoggedThisStreakEpisodeRef.current[id] = false;
         hasLoggedThisChangeEpisodeRef.current[id] = false;
@@ -141,7 +142,8 @@ export default function App() {
       const alreadyLoggedStreak = hasLoggedThisStreakEpisodeRef.current[id] ?? false;
       const alreadyLoggedChange = hasLoggedThisChangeEpisodeRef.current[id] ?? false;
       if(!alreadyLoggedChange){
-		newLogs.push({
+	
+        newLogs.push({
           ts: nowTs(),
           lamp: name,
           msg: `Became LOUD (≥ ${LOUD_THRESHOLD}%) Current: ${v}%`,
@@ -150,7 +152,6 @@ export default function App() {
         hasLoggedThisChangeEpisodeRef.current[id] = true;
       } else if (!alreadyLoggedStreak && nextStreak >= LOUD_STREAK_TO_LOG) {
         hasLoggedThisStreakEpisodeRef.current[id] = true;
-        const name = lamp.label ?? lamp.uuid ?? id;
 
         newLogs.push({
           ts: nowTs(),
