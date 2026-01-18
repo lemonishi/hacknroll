@@ -45,7 +45,12 @@ function normalizeToDict(data: any): LampsDict {
     for (const [k, v] of Object.entries(data)) {
       const lamp = (v as any) ?? {};
       const uuid = lamp.uuid ?? lamp.label ?? k;
-      out[uuid] = { uuid, ...lamp, label: lamp.label ?? uuid };
+      out[uuid] = {
+        uuid,
+        ...lamp,
+        level: lamp.level ?? 1,
+        label: lamp.label ?? uuid,
+      };
     }
     return out;
   }
@@ -65,7 +70,9 @@ function normalizeToDict(data: any): LampsDict {
 }
 
 export default function App() {
-  const [lamps, setLamps] = useState<LampsDict>(() => normalizeToDict(initialLampsRaw));
+  const [lamps, setLamps] = useState<LampsDict>(() =>
+    normalizeToDict(initialLampsRaw),
+  );
   const [level, setLevel] = useState<1 | 2>(1);
 
   const [logs, setLogs] = useState<LogItem[]>([]);
@@ -80,7 +87,10 @@ export default function App() {
   const hasLoggedThisEpisodeRef = useRef<Record<string, boolean>>({});
 
   const lampsArray = useMemo(() => Object.values(lamps), [lamps]);
-  const visibleLamps = useMemo(() => lampsArray.filter((l) => Number(l.level) === level), [lampsArray, level]);
+  const visibleLamps = useMemo(
+    () => lampsArray.filter((l) => Number(l.level) === level),
+    [lampsArray, level],
+  );
 
   function applyIncoming(incoming: LampsDict) {
     // ✅ merge: do NOT lose local x/y when polling
@@ -144,13 +154,14 @@ export default function App() {
     async function fetchLamps() {
       // ✅ If backend is not working yet, simulate "fetch" using CURRENT state (not stale)
       // This keeps logs counting and allows drag to persist.
-      const simulatedIncoming = lampsRef.current;
-      applyIncoming(simulatedIncoming);
+      // const simulatedIncoming = lampsRef.current;
+      // applyIncoming(simulatedIncoming);
 
       // Later, replace the above 2 lines with real fetch:
-      // const res = await fetch("http://localhost:XXXX/lamps");
-      // const data = await res.json();
-      // applyIncoming(normalizeToDict(data));
+      const res = await fetch("http://10.203.103.170:5001/devices/list");
+      const data = await res.json();
+      applyIncoming(normalizeToDict(data));
+      console.log(lamps);
     }
 
     fetchLamps();
