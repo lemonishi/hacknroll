@@ -3,7 +3,7 @@ services:
     build: backend
     container_name: quack_api
     ports:
-      - "5000:5000"
+      - "5001:5001"
     networks:
       - apinet
   webserver:
