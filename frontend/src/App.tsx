@@ -95,7 +95,7 @@ export default function App() {
         const prevLamp = prev[id];
         merged[id] = {
           ...incLamp,
-          level: 1,
+		  level: prevLamp?.level ?? 1,
           x: incLamp.x ?? prevLamp?.x ?? "50%",
           y: incLamp.y ?? prevLamp?.y ?? "50%",
         };
