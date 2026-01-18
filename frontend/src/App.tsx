@@ -15,7 +15,7 @@ type Lamp = {
   value?: number;
   x?: string;
   y?: string;
-  level?: 1 | 2;
+  level?: typeof allLevels[number];
   [k: string]: any;
 };
 
